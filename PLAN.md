@@ -46,10 +46,12 @@ teedr/
 Thin wrapper -- require the gem, call Teedr::CLI.start.
 
 ### lib/teedr/item.rb
-Class with three fields:
+Class with five fields:
 - body (string) -- the content
 - created_at (Time, defaults to Time.now)
 - type (string, defaults to "text")
+- source (string) -- origin of the content: "inline" or "file"
+- file_path (string, optional) -- populated when source is "file", nil otherwise
 
 ### lib/teedr/formatter.rb
 Two methods:
@@ -82,11 +84,19 @@ JSON output:
   {
     "body": "content here",
     "created_at": "2026-02-28T12:00:00Z",
-    "type": "text"
+    "type": "text",
+    "source": "inline",
+    "file_path": null
   }
 
-Markdown output:
+Markdown output (with YAML frontmatter):
 
+  ---
+  created_at: 2026-02-28T12:00:00Z
+  type: text
+  source: inline
+  file_path: null
+  ---
   ## [text] 2026-02-28 12:00:00
   content here
 
@@ -102,44 +112,19 @@ Markdown output:
 ## Future Enhancements (noted, not built)
 - Rails/Turbo/Hotwire view layer consuming teedr output
 - Persistent storage (SQLite/ActiveRecord)
+- Additional source types beyond "inline" and "file" (e.g. url, api, stdin) -- each may require its own metadata stored alongside source and file_path
 
 ---
 
 ## Build Order
 1. Scaffold all gem files (gemspec, Gemfile, Rakefile, lib, exe, bin)
-2. Verify with manual CLI test (see Verification below)
-3. Write specs after first round of files passes manually
+2. Verify with manual CLI test
+3. Write specs using TDD going forward
 
-## Minimum Spec (written after scaffold)
+## Minimum Spec
 - Pass a string via positional arg, confirm formatted output is returned
 - Pass a file via --file, confirm formatted output is returned
 
----
-
-## Progress Log
-
-### 2026-02-28
-- Created directory structure (exe/, lib/teedr/, spec/teedr/, bin/)
-- Wrote lib/teedr/version.rb
-- Wrote teedr.gemspec
-- Wrote Gemfile
-- Wrote Rakefile
-- Wrote lib/teedr/item.rb
-- Wrote lib/teedr/formatter.rb (render_json, render_markdown)
-- Wrote lib/teedr/cli.rb (ingest command with --body, --file, --type, --format, --output, positional arg)
-- Wrote lib/teedr.rb (root require file)
-- Wrote exe/teedr (executable entry point)
-- Wrote bin/setup, bin/console
-- Wrote .rubocop.yml, .rspec, .gitignore
-- Pending: add default_command :ingest to CLI so subcommand is optional
-- Pending: bundle install and manual verification
-- Pending: write specs
-
----
-
-## Verification
-1. bundle install
-2. bundle exec exe/teedr ingest "hello world" -- JSON to stdout
-3. bundle exec exe/teedr "hello world" -- same result, no subcommand needed
-4. bundle exec exe/teedr ingest --file somefile.txt --format markdown
-5. bundle exec exe/teedr ingest "test" --output /tmp/out.json
+## See Also
+- STATUS.md -- session log and next steps
+- TUTORIAL.md -- project overview and education

@@ -13,9 +13,11 @@ module Teedr
     option :format, type: :string,  default: "json", desc: "Output format (json or markdown)"
     option :output, type: :string,  desc: "Write output to file instead of stdout"
     def ingest(*args)
-      body = resolve_body(args)
-      item = Teedr::Item.new(body: body, type: options[:type])
-      result = render(item)
+      body      = resolve_body(args)
+      source    = options[:file] ? "file" : "inline"
+      file_path = options[:file] || nil
+      item      = Teedr::Item.new(body: body, type: options[:type], source: source, file_path: file_path)
+      result    = render(item)
       write_output(result)
     end
 
