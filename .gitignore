@@ -6,4 +6,11 @@
 /spec/reports/
 /tmp/
 *.gem
+CLAUDE.md
 PLAN.md
+TUTORIAL.md
+STATUS.md
+LEARNINGS.md
+.claude/*
+.codex/*
+
